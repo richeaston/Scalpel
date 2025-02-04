@@ -1,4 +1,4 @@
-<#	
+﻿<#	
 	.NOTES
 	===========================================================================
 	 Created with: 	SAPIEN Technologies, Inc., PowerShell Studio 2022 v5.8.197
@@ -30,8 +30,8 @@ Function Get-installedsoftware
 	{
 		if ($name)
 		{
-			
-			$installed = Get-ItemProperty "$p\*" | Where-Object { $_.DisplayName -like $name } | Select-Object DisplayName, DisplayVersion, UninstallString, SystemComponent | sort-object DisplayName
+			$installed = Get-ItemProperty "$p\*" | Where-Object { $_.DisplayName -like $name } | Select-Object * | sort-object DisplayName
+		#	$installed = Get-ItemProperty "$p\*" | Where-Object { $_.DisplayName -like $name } | Select-Object DisplayName, DisplayVersion, UninstallString, SystemComponent | sort-object DisplayName
 		}
 		foreach ($exclusion in ($exclusions.split(',')))
 		{
@@ -58,5 +58,7 @@ Function Get-installedsoftware
 	}
 }
 
-#search for the software (including wildcard * pre and post), example "Epic*" and add exclusions as required (including wildcard * pre and post), seperating by a "," exmaple "NVIDIA*,Microsoft*,Intel*,Realtek*"
-Get-installedsoftware -name "*" -exclusions "NVIDIA*,Microsoft*,Intel*"
+
+Get-installedsoftware -name "*" -exclusions "NVIDIA*,Microsoft*,Intel*,Realtek*"
+
+
