@@ -57,10 +57,10 @@ Function Get-installedsoftware
 		}
 		#detect software installs
 	}
+	#group all "registry" software together in one array
 	Return $sassets
 
 }
-
 
 
 $installedSoftware = Get-installedsoftware -name "*" -exclusions "NVIDIA*,Microsoft*,Intel*,Realtek*"
