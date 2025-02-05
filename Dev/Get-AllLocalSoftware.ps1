@@ -39,7 +39,7 @@ Function Get-installedsoftware {
 			$item = [pscustomobject]@{
 				Name            = $i.Displayname
 				Version         = $i.DisplayVersion
-				Publisher		= $i.Publisher
+				Id		= $i.Publisher
 				Uninstall       = $i.UninstallString
 				Hive            = $p
 				SystemComponent = $i.SystemComponent
