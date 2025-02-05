@@ -84,7 +84,12 @@ foreach ($App in $AppsToRemove) {
     # Check if the app is installed via Appx
     if (Get-AppxPackage -Name $App -ErrorAction SilentlyContinue) {
         Write-Host "Removing Appx Package: $App"
-        Remove-AppxPackage -Name $App -ErrorAction SilentlyContinue
+        try {
+            Remove-AppxPackage -Name $App -ErrorAction SilentlyContinue
+        }
+        Catch {
+            
+        }
     } else {
         # Check if the app is installed traditionally (via registry)
         $UninstallString = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*", "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where-Object { $_.DisplayName -eq $App } | Select-Object -ExpandProperty UninstallString
