@@ -43,6 +43,7 @@ Function Get-installedsoftware {
 				Uninstall       = $i.UninstallString
 				Hive            = $p
 				SystemComponent = $i.SystemComponent
+				Source			= "Local"
 			}
 			if ($null -ne $item.name) {
 				$sassets += $item
@@ -162,7 +163,7 @@ $WGLocalApps = Get-WgApplications | Sort-Object Name
 $WGLocalApps
 
 $applist = Get-installedsoftware -name "*" -exclusions "NVIDIA*,Microsoft*,Intel*,Realtek*,NvCPL*"
-$applist
+
 
 # Filter the applist based on keyword matching
 $filteredApplist = $applist | Where-Object {
