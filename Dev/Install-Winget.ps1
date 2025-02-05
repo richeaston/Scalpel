@@ -52,3 +52,5 @@ Function Install-Winget
 	}
 	
 }
+
+Install-Winget

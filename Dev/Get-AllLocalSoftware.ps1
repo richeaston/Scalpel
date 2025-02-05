@@ -159,7 +159,10 @@ function Get-WGApplications
 }
 
 $WGLocalApps = Get-WgApplications | Sort-Object Name
+$WGLocalApps
+
 $applist = Get-installedsoftware -name "*" -exclusions "NVIDIA*,Microsoft*,Intel*,Realtek*,NvCPL*"
+$applist
 
 # Filter the applist based on keyword matching
 $filteredApplist = $applist | Where-Object {
@@ -183,6 +186,8 @@ $filteredApplist = $applist | Where-Object {
 
   !$matchFound
 }
+
+$filteredApplist
 
 foreach ($app in $filteredApplist) {
     Write-Host "`nSearching for: '$($app.name)' in Winget."
