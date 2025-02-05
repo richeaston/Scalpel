@@ -11,7 +11,7 @@
 		Installs latest version of Winget.
 #>
 
-Function INstall-Winget
+Function Install-Winget
 {
 	
 	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
