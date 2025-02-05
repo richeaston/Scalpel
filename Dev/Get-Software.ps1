@@ -12,6 +12,7 @@
 
 #>
 
+
 Function Get-installedsoftware 
 {
 	param
@@ -25,7 +26,8 @@ Function Get-installedsoftware
 		[string[]]$exclusions
 	)
 	$paths = @("HKLM:\\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", "HKLM:\\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")
-	
+	$sassets = @()
+		
 	foreach ($p in $paths)
 	{
 		if ($name)
@@ -33,12 +35,12 @@ Function Get-installedsoftware
 			$installed = Get-ItemProperty "$p\*" | Where-Object { $_.DisplayName -like $name } | Select-Object * | sort-object DisplayName
 		#	$installed = Get-ItemProperty "$p\*" | Where-Object { $_.DisplayName -like $name } | Select-Object DisplayName, DisplayVersion, UninstallString, SystemComponent | sort-object DisplayName
 		}
+		
 		foreach ($exclusion in ($exclusions.split(',')))
 		{
 			$installed = $installed | Where-Object { $_.DisplayName -notlike $exclusion }
 		}
 		
-		$sassets = @()
 		foreach ($i in $installed)
 		{
 			$item = [pscustomobject]@{
@@ -54,11 +56,13 @@ Function Get-installedsoftware
 			}
 		}
 		#detect software installs
-		$sassets | Sort-Object Name | Format-Table -AutoSize -Wrap
 	}
+	Return $sassets
+
 }
 
 
-Get-installedsoftware -name "*" -exclusions "NVIDIA*,Microsoft*,Intel*,Realtek*"
 
+$installedSoftware = Get-installedsoftware -name "*" -exclusions "NVIDIA*,Microsoft*,Intel*,Realtek*"
+$installedSoftware | sort-object Name | Format-Table -AutoSize
 

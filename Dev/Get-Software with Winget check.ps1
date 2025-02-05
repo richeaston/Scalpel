@@ -41,8 +41,11 @@
 			}
 		}
 	}
-	
+	remove-item -Path $tempapplist -force
+    return $parsedApps
 }
+
+Get-LocalApplications 
 
 # Display or further process the parsed apps
 #$parsedApps | Sort-Object Name | Out-GridView -Title "Locally Installed Apps" -PassThru
