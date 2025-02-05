@@ -37,13 +37,13 @@ Function Get-installedsoftware {
 		
 		foreach ($i in $installed) {
 			$item = [pscustomobject]@{
-				Name            = $i.Displayname
-				Version         = $i.DisplayVersion
-				Id		= $i.Publisher
-				Uninstall       = $i.UninstallString
-				Hive            = $p
-				SystemComponent = $i.SystemComponent
-				Source			= "Local"
+				Name      = $i.Displayname
+				Version   = $i.DisplayVersion
+				Id        = $i.Publisher
+				Uninstall = $i.UninstallString
+				#Hive            = $p
+				#SystemComponent = $i.SystemComponent
+				Source    = "Local"
 			}
 			if ($null -ne $item.name) {
 				$sassets += $item
@@ -112,8 +112,7 @@ Function Find-WGSoftware {
 	return $parsedApps # Return the array of PSCustomObjects
 }
 
-function Get-WGApplications
-{
+function Get-WGApplications {
 	
 	$tempapplist = "c:\temp\appslist.json"
 	$wingetPackages = winget export -o $tempapplist --include-versions --accept-source-agreements
@@ -121,17 +120,14 @@ function Get-WGApplications
 	$apparray = @()
 	
 	# Iterate through each source in the JSON
-	foreach ($source in $appsData.Sources)
-	{
-		foreach ($package in $source.Packages)
-		{
+	foreach ($source in $appsData.Sources) {
+		foreach ($package in $source.Packages) {
 			$apparray += $package
 		}
 	}
 	
 	$parsedApps = @()
-	foreach ($app in $apparray)
-	{
+	foreach ($app in $apparray) {
 		$appsearch = winget search $app.PackageIdentifier
 		
 		# Skip header lines and empty lines
@@ -141,22 +137,20 @@ function Get-WGApplications
 			$_.Trim() -ne ""
 		}
 		
-		foreach ($line in $validLines)
-		{
+		foreach ($line in $validLines) {
 			# Regex to capture the entire name, even with multiple words
-			if ($line -match '^((?:\S+\s+)+?)(\S+)\s+(\S+)\s+(\S+)$' -and $line -notlike '*Alpha*' -and $line -notlike '*Beta*' -and $line -notlike '*Preview*' -and $line -notlike '*Canary*' -and $line -notlike '*Dev*' -and $line -notlike '*Driver*' -and $line -notlike '*Runtime*' -and $line -notlike '*Insider*' -and $line -notlike '*VCRedist*' -and $line -notlike '*Edge*' -and $line -notlike '*UI.Xaml*' -and $line -notlike '*Nvidia*')
-			{
+			if ($line -match '^((?:\S+\s+)+?)(\S+)\s+(\S+)\s+(\S+)$' -and $line -notlike '*Alpha*' -and $line -notlike '*Beta*' -and $line -notlike '*Preview*' -and $line -notlike '*Canary*' -and $line -notlike '*Dev*' -and $line -notlike '*Driver*' -and $line -notlike '*Runtime*' -and $line -notlike '*Insider*' -and $line -notlike '*VCRedist*' -and $line -notlike '*Edge*' -and $line -notlike '*UI.Xaml*' -and $line -notlike '*Nvidia*') {
 				$parsedApps += [PSCustomObject]@{
-					Name = $Matches[1].Trim()
-					Id   = $Matches[2].Trim()
+					Name    = $Matches[1].Trim()
+					Id      = $Matches[2].Trim()
 					Version = $Matches[3].Trim()
-					Source = $Matches[4].Trim()
+					Source  = $Matches[4].Trim()
 				}
 			}
 		}
 	}
 	remove-item -Path $tempapplist -force
-    return $parsedApps
+	return $parsedApps
 }
 
 $WGLocalApps = Get-WgApplications | Sort-Object Name
@@ -167,103 +161,117 @@ $applist = Get-installedsoftware -name "*" -exclusions "NVIDIA*,Microsoft*,Intel
 
 # Filter the applist based on keyword matching
 $filteredApplist = $applist | Where-Object {
-    $app = $_
-    $matchFound = $false
+	$app = $_
+	$matchFound = $false
+	if (!($app.Uninstall -like '*steam://uninstall*')) {
+		foreach ($wgApp in $WGLocalApps) {
+			
+			
+			
+			
+			$appKeywords = $app.Name -split '\s+'
+			$wgAppKeywords = $wgApp.Name -split '\s+'
 
-    foreach ($wgApp in $WGLocalApps) {
-        $appKeywords = $app.Name -split '\s+'
-        $wgAppKeywords = $wgApp.Name -split '\s+'
-
-        foreach ($keyword in $appKeywords) {
-            if ($wgAppKeywords -contains $keyword) {
-                write-host $wgAppKeywords
-				write-host $keyword
-				$matchFound = $true
-                break
-            }
-        }
-        if ($matchFound) { break }
-    }
-
-  !$matchFound
+			foreach ($keyword in $appKeywords) {
+				
+				if ($wgAppKeywords -contains $keyword) {
+					write-host $wgAppKeywords
+					write-host $keyword
+					$matchFound = $true
+					break
+				}
+			}
+			if ($matchFound) { break }
+		}
+		!$matchFound
+	}
 }
 
 $filteredApplist
 
 foreach ($app in $filteredApplist) {
-    Write-Host "`nSearching for: '$($app.name)' in Winget."
+	Write-Host "`nSearching for: '$($app.name)' in Winget."
 
-    $software = Find-WGSoftware -name "$($app.Name)" -version "$($app.version)"
+	$software = Find-WGSoftware -name "$($app.Name)" -version "$($app.version)"
 
-    if ($software) {
-        # Check if $software is an array (multiple results) or a single object
-        if ($software -is [array]) {
-            $found = $false  # Flag to track if a suitable match is found
+	if ($software) {
+		# Check if $software is an array (multiple results) or a single object
+		if ($software -is [array]) {
+			$found = $false  # Flag to track if a suitable match is found
 
-            foreach ($item in $software) { # Iterate through results if it's an array
-                if (!($item.Name -like '*No package found*')) {
-                    Write-Host "`tFound " -NoNewline
-                    Write-host "'$($item.name)' " -ForegroundColor Cyan -NoNewline
-                    Write-host ",Version: " -NoNewline
-                    Write-host "'$($item.Version)' " -ForegroundColor Cyan -NoNewline
-                    Write-host ",Package ID: " -NoNewline
-                    Write-host "'$($item.Id)' " -ForegroundColor Cyan
-                    $found = $true  # Set flag to true as we found a match
-                    break # Exit the inner loop after finding the first match
-                }
-            }
+			foreach ($item in $software) {
+				# Iterate through results if it's an array
+				if (!($item.Name -like '*No package found*')) {
+					Write-Host "`tFound " -NoNewline
+					Write-host "'$($item.name)' " -ForegroundColor Cyan -NoNewline
+					Write-host ",Version: " -NoNewline
+					Write-host "'$($item.Version)' " -ForegroundColor Cyan -NoNewline
+					Write-host ",Package ID: " -NoNewline
+					Write-host "'$($item.Id)' " -ForegroundColor Cyan
+					$found = $true  # Set flag to true as we found a match
+					break # Exit the inner loop after finding the first match
+				}
+			}
 
-            if (!$found) { # If no suitable package was found in the array
-                Write-Host "`t'$($app.Name)' version '$($app.version)' not found! (No suitable package)" -ForegroundColor Magenta
-            }
+			if (!$found) {
+				# If no suitable package was found in the array
+				Write-Host "`t'$($app.Name)' version '$($app.version)' not found! (No suitable package)" -ForegroundColor Magenta
+			}
 
-        } else { # if it's a single object
-            if (!($software.Name -like '*No package found*')) {
-                Write-Host "`tFound " -NoNewline
-                Write-host "'$($software.name)' " -ForegroundColor Cyan -NoNewline
-                Write-host ",Version: " -NoNewline
-                Write-host "'$($software.Version)' " -ForegroundColor Cyan -NoNewline
-                Write-host ",Package ID: " -NoNewline
-                Write-host "'$($software.Id)' " -ForegroundColor Cyan
-            } else {
-                $software = Find-WGSoftware -name "$($app.Name)"
-                if ($software) {
-                    if ($software -is [array]) {
-                        $found = $false
-                        foreach ($item in $software) {
-                            if (!($item.Name -like '*No package found*')) {
-                                Write-Host "`tFound " -NoNewline
-                                Write-host "'$($item.name)' " -ForegroundColor Cyan -NoNewline
-                                Write-host ",Version: " -NoNewline
-                                Write-host "'$($item.Version)' " -ForegroundColor Cyan -NoNewline
-                                Write-host ",Package ID: " -NoNewline
-                                Write-host "'$($item.Id)' " -ForegroundColor Cyan
-                                $found = $true
-                                break
-                            }
-                        }
-                        if (!$found) {
-                            Write-Host "`t'$($app.Name)' not found! (No suitable package)" -ForegroundColor Magenta
-                        }
+		}
+		else {
+			# if it's a single object
+			if (!($software.Name -like '*No package found*')) {
+				Write-Host "`tFound " -NoNewline
+				Write-host "'$($software.name)' " -ForegroundColor Cyan -NoNewline
+				Write-host ",Version: " -NoNewline
+				Write-host "'$($software.Version)' " -ForegroundColor Cyan -NoNewline
+				Write-host ",Package ID: " -NoNewline
+				Write-host "'$($software.Id)' " -ForegroundColor Cyan
+			}
+			else {
+				$software = Find-WGSoftware -name "$($app.Name)"
+				if ($software) {
+					if ($software -is [array]) {
+						$found = $false
+						foreach ($item in $software) {
+							if (!($item.Name -like '*No package found*')) {
+								Write-Host "`tFound " -NoNewline
+								Write-host "'$($item.name)' " -ForegroundColor Cyan -NoNewline
+								Write-host ",Version: " -NoNewline
+								Write-host "'$($item.Version)' " -ForegroundColor Cyan -NoNewline
+								Write-host ",Package ID: " -NoNewline
+								Write-host "'$($item.Id)' " -ForegroundColor Cyan
+								$found = $true
+								break
+							}
+						}
+						if (!$found) {
+							Write-Host "`t'$($app.Name)' not found! (No suitable package)" -ForegroundColor Magenta
+						}
 
-                    } else {
-                        if (!($software.Name -like '*No package found*')) {
-                            Write-Host "`tFound " -NoNewline
-                            Write-host "'$($software.name)' " -ForegroundColor Cyan -NoNewline
-                            Write-host ",Version. " -NoNewline
-                            Write-host "'$($software.Version)' " -ForegroundColor Cyan -NoNewline
-                            Write-host ",Package ID: " -NoNewline
-                            Write-host "'$($software.Id)' " -ForegroundColor Cyan
-                        } else {
-                            Write-Host "`t'$($app.Name)' not found! (No suitable package)" -ForegroundColor Magenta
-                        }
-                    }
-                } else {
-                    Write-Host "`t'$($app.Name)' not found!" -ForegroundColor Magenta
-                }
-            }
-        }
-    } else {
-        Write-Host "`t'$($app.Name)' version '$($app.version)' not found!" -ForegroundColor Magenta
-    }
+					}
+					else {
+						if (!($software.Name -like '*No package found*')) {
+							Write-Host "`tFound " -NoNewline
+							Write-host "'$($software.name)' " -ForegroundColor Cyan -NoNewline
+							Write-host ",Version. " -NoNewline
+							Write-host "'$($software.Version)' " -ForegroundColor Cyan -NoNewline
+							Write-host ",Package ID: " -NoNewline
+							Write-host "'$($software.Id)' " -ForegroundColor Cyan
+						}
+						else {
+							Write-Host "`t'$($app.Name)' not found! (No suitable package)" -ForegroundColor Magenta
+						}
+					}
+				}
+				else {
+					Write-Host "`t'$($app.Name)' not found!" -ForegroundColor Magenta
+				}
+			}
+		}
+	}
+ else {
+		Write-Host "`t'$($app.Name)' version '$($app.version)' not found!" -ForegroundColor Magenta
+	}
 }
