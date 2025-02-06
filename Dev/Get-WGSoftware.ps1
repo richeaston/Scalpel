@@ -1,30 +1,9 @@
 $wingetpackages = winget list --source Winget | Where-Object {
-    $_ -notlike '*Intel*' -and
-    $_ -notlike '*Realtek*' -and
-    $_ -notlike '*SAPIEN*' -and
-    $_ -notlike '*ARP\Machine\X64\Steam App*' -and
-    $_ -notlike '*Microsoft Edge*' -and
-    $_ -notlike '*Windows*' -and
-    $_ -notlike '*UI.Xaml*' -and
-    $_ -notlike '*Microsoft Engagement Framework*' -and
-    $_ -notlike '*Store Experience Host*' -and
-    $_ -notlike '*Sticky Notes*' -and
-    $_ -notlike '*store*' -and
-    $_ -notlike '*.Net Native*' -and
-    $_ -notlike '*Image Extension*' -and
-    $_ -notlike '*Video Extensions*' -and
-    $_ -notlike '*Microsoft Visual C++*' -and
-    $_ -notlike '*paint*' -and
-    $_ -notlike '*runtime*' -and
-    $_ -notlike '*Phone*' -and
-    $_ -notlike '*snipping tool*' -and
-    $_ -notlike '*Context Menu*'
+    '*Intel*','*Realtek*','*SAPIEN*','*ARP\Machine\X64\Steam App*','*Microsoft Edge*','*Windows*','*UI.Xaml*','*Microsoft Engagement Framework*','*Store Experience Host*','*Sticky Notes*','*store*','*.Net Native*','*Image Extension*','*Video Extension*','*Media Extension*','*Microsoft Visual C++*','*paint*','*runtime*','*Phone*','*snipping tool*','*Context Menu*'
 }
 
 $validLines = $wingetpackages | Where-Object {
-    $_ -notmatch "^Name\s*Id\s*Version\s*Available" -and
-    $_ -notmatch "^-+$" -and
-    $_.Trim() -ne ""
+    $_ -notmatch "^Name\s*Id\s*Version\s*Available",$_ -notmatch "^-+$",$_.Trim() -ne ""
 }
 
 $parsedApps = @()
@@ -43,12 +22,13 @@ foreach ($line in $validLines) {
             $id = $Matches[2]  # ID is the FIRST captured group (including ARP\Machine\)
             $version = $Matches[3].Trim()
             $available = if ($Matches[4]) { $Matches[4].Trim() } else { $Matches[3].Trim() }
-
-            $parsedApps += [PSCustomObject]@{
-                Name      = $name
-                Id        = $id
-                Version   = $version
-                Available = $available
+            if ($null -ne $name -or $name -ne "") {
+                $parsedApps += [PSCustomObject]@{
+                    Name      = $name
+                    Id        = $id
+                    Version   = $version
+                    Available = $available
+                }
             }
         }
         else {

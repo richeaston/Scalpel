@@ -38,7 +38,7 @@ Function Get-installedsoftware
 		
 		foreach ($exclusion in ($exclusions.split(',')))
 		{
-			$installed = $installed | Where-Object { $_.DisplayName -notlike $exclusion }
+			$installed = $installed | Where-Object { $_.DisplayName -like $exclusion }
 		}
 		
 		foreach ($i in $installed)

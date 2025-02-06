@@ -10,6 +10,12 @@ Function Get-WingetVersion {
 	
     if ($localWingetVersion -lt $LatestVersion) {
         Write-host " Winget outdated ($localWingetVersion), Installing latest version ($LatestVersion). " -ForegroundColor Yellow -BackgroundColor DarkRed
+        try {
+            Winget Upgrade Winget
+        }
+        Catch {
+            
+        }
         # get latest download url
         $URL = "https://api.github.com/repos/microsoft/winget-cli/releases/latest"
         $URL = (Invoke-WebRequest -Uri $URL).Content | ConvertFrom-Json |
@@ -31,6 +37,8 @@ Function Get-WingetVersion {
 
 }
 
+
+#needs app-installer package and dependencies
 Function Install-Winget {
 	
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -44,6 +52,12 @@ Function Install-Winget {
 	
     if ($localWingetVersion -lt $LatestVersion) {
         Write-host " Winget outdated ($localWingetVersion), Installing latest version ($LatestVersion). " -ForegroundColor Yellow -BackgroundColor DarkRed
+        try {
+            Winget Upgrade Winget
+        }
+        Catch {
+
+        }
         # get latest download url
         $URL = "https://api.github.com/repos/microsoft/winget-cli/releases/latest"
         $URL = (Invoke-WebRequest -Uri $URL).Content | ConvertFrom-Json |
@@ -99,7 +113,12 @@ foreach ($app in ($parsedApps | Sort-Object Name)) {
     Write-host $($app.name) -NoNewline -ForegroundColor Yellow
     Write-Host ", Please Wait." -ForegroundColor Green
     Write-host ""
-    winget install --name $($app.name) --id $($app.id) --silent --accept-package-agreements --accept-source-agreements --dependency-Source --ignore-security-hash
+    try {
+        winget install --id $($app.id) --silent --accept-package-agreements --accept-source-agreements --dependency-Source --ignore-security-hash
+    }
+    Catch {
+
+    }
     Write-host ""
 }
     

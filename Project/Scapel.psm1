@@ -97,7 +97,7 @@ function Get-LocalApplications
 		foreach ($line in $validLines)
 		{
 			# Regex to capture the entire name, even with multiple words
-			if ($line -match '^((?:\S+\s+)+?)(\S+)\s+(\S+)\s+(\S+)$' -and $line -notlike '*Alpha*' -and $line -notlike '*Beta*' -and $line -notlike '*Preview*' -and $line -notlike '*Canary*' -and $line -notlike '*Dev*' -and $line -notlike '*Driver*' -and $line -notlike '*Runtime*' -and $line -notlike '*Insider*' -and $line -notlike '*VCRedist*' -and $line -notlike '*Edge*' -and $line -notlike '*UI.Xaml*' -and $line -notlike '*Nvidia*')
+			if ($line -match '^((?:\S+\s+)+?)(\S+)\s+(\S+)\s+(\S+)$' -and $line -like '*Alpha*' -and $line -like '*Beta*' -and $line -like '*Preview*' -and $line -like '*Canary*' -and $line -like '*Dev*' -and $line -like '*Driver*' -and $line -like '*Runtime*' -and $line -like '*Insider*' -and $line -like '*VCRedist*' -and $line -like '*Edge*' -and $line -like '*UI.Xaml*' -and $line -like '*Nvidia*')
 			{
 				$parsedApps += [PSCustomObject]@{
 					Name = $Matches[1].Trim()

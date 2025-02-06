@@ -32,7 +32,7 @@ Function Get-installedsoftware {
 			#	$installed = Get-ItemProperty "$p\*" | Where-Object { $_.DisplayName -like $name } | Select-Object DisplayName, DisplayVersion, UninstallString, SystemComponent | sort-object DisplayName
 		}
 		foreach ($exclusion in ($exclusions.split(','))) {
-			$installed = $installed | Where-Object { $_.DisplayName -notlike $exclusion }
+			$installed = $installed | Where-Object { $_.DisplayName -like $exclusion }
 		}
 		
 		foreach ($i in $installed) {
@@ -84,7 +84,7 @@ Function Find-WGSoftware {
 			$appVersion = $Matches[3].Trim()
             
 			# Check for exclusion keywords before creating the object
-			if ($appName -notlike '*Alpha*' -and $appName -notlike '*Beta*' -and $appName -notlike '*Preview*' -and $appName -notlike '*Canary*' -and $appName -notlike '*Dev*' -and $appName -notlike '*Driver*' -and $appName -notlike '*Runtime*' -and $appName -notlike '*Insider*') {
+			if ($appName -like '*Alpha*' -and $appName -like '*Beta*' -and $appName -like '*Preview*' -and $appName -like '*Canary*' -and $appName -like '*Dev*' -and $appName -like '*Driver*' -and $appName -like '*Runtime*' -and $appName -like '*Insider*') {
 
 				$app = [PSCustomObject]@{
 					Name    = $appName
@@ -139,7 +139,7 @@ function Get-WGApplications {
 		
 		foreach ($line in $validLines) {
 			# Regex to capture the entire name, even with multiple words
-			if ($line -match '^((?:\S+\s+)+?)(\S+)\s+(\S+)\s+(\S+)$' -and $line -notlike '*Alpha*' -and $line -notlike '*Beta*' -and $line -notlike '*Preview*' -and $line -notlike '*Canary*' -and $line -notlike '*Dev*' -and $line -notlike '*Driver*' -and $line -notlike '*Runtime*' -and $line -notlike '*Insider*' -and $line -notlike '*VCRedist*' -and $line -notlike '*Edge*' -and $line -notlike '*UI.Xaml*' -and $line -notlike '*Nvidia*') {
+			if ($line -match '^((?:\S+\s+)+?)(\S+)\s+(\S+)\s+(\S+)$' -and $line -like '*Alpha*' -and $line -like '*Beta*' -and $line -like '*Preview*' -and $line -like '*Canary*' -and $line -like '*Dev*' -and $line -like '*Driver*' -and $line -like '*Runtime*' -and $line -like '*Insider*' -and $line -like '*VCRedist*' -and $line -like '*Edge*' -and $line -like '*UI.Xaml*' -and $line -like '*Nvidia*') {
 				$parsedApps += [PSCustomObject]@{
 					Name    = $Matches[1].Trim()
 					Id      = $Matches[2].Trim()
