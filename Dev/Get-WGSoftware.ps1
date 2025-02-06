@@ -58,11 +58,13 @@ foreach ($line in $validLines) {
     else {
         # ARP\ not found - use original method (with improvements)
         if ($line -match "^(.+?)\s+([^\s]+)\s+([^\s]+)\s*([^\s]+)?$") {
-            $parsedApps += [PSCustomObject]@{
-                Name      = $Matches[1].Trim()
-                Id        = $Matches[2].Trim()
-                Version   = $Matches[3].Trim()
-                Available = if ($Matches[4]) { $Matches[4].Trim() } else { $Matches[3].Trim() }
+            if ($null -ne $Matches[1] -or $Matches[1] -ne "") {
+                $parsedApps += [PSCustomObject]@{
+                    Name      = $Matches[1].Trim()
+                    Id        = $Matches[2].Trim()
+                    Version   = $Matches[3].Trim()
+                    Available = if ($Matches[4]) { $Matches[4].Trim() } else { $Matches[3].Trim() }
+                }
             }
         }
     }
@@ -86,8 +88,11 @@ foreach ($app in ($parsedApps | Sort-Object Name)) {
         Write-host "Upgrade version for " -NoNewline -ForegroundColor Green
         Write-host $($app.name) -NoNewline -ForegroundColor Yellow
         Write-Host ", Installing." -ForegroundColor Green
+        Write-host ""
         winget upgrade $($app.name) --silent --accept-package-agreements --accept-source-agreements
-    } else {
+        Write-host ""
+    }
+    else {
         Write-host "Latest version of " -NoNewline
         Write-host $($app.name) -NoNewline -ForegroundColor Yellow
         Write-Host " is already installed."
