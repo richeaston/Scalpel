@@ -85,7 +85,7 @@ foreach ($App in $AppsToRemove) {
     if (Get-AppxPackage -Name $App -ErrorAction SilentlyContinue) {
         Write-Host "Removing Appx Package: $App"
         try {
-            Remove-AppxPackage -Name $App -ErrorAction SilentlyContinue
+            Remove-AppxPackage -Name $App -ErrorAction SilentlyContinue -Force
         }
         Catch {
             

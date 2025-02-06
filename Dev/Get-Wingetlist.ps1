@@ -1,5 +1,4 @@
 $wingetpackages = winget list --source Winget | Where-Object {
-    $_ -notlike '*Nvidia*' -and
     $_ -notlike '*Intel*' -and
     $_ -notlike '*Realtek*' -and
     $_ -notlike '*SAPIEN*' -and
@@ -78,11 +77,11 @@ foreach ($app in $parsedApps) {
     $app.Available = $app.Available -replace "[^ -~]+", ""
 }
 
-$parsedApps | Format-Table -AutoSize
+$parsedApps | Sort-Object Name | Format-Table -AutoSize
 
 Write-host "Installing any newer versions, Please Wait..." -BackgroundColor Green -ForegroundColor Yellow
 Write-host ""
-foreach ($app in $parsedApps) {
+foreach ($app in ($parsedApps | Sort-Object Name)) {
     if ($($app.available) -gt $($app.version)) {
         Write-host "Upgrade version for " -NoNewline -ForegroundColor Green
         Write-host $($app.name) -NoNewline -ForegroundColor Yellow
@@ -102,3 +101,4 @@ $dir = Split-Path $scriptpath
 $parsedApps | ConvertTo-Json -Depth 3 | Out-File -Encoding UTF8 -FilePath "$dir\winget_apps.json"
 
 Write-Host "`nData exported to winget_apps.json" -BackgroundColor Blue -ForegroundColor Green
+Write-host ""
