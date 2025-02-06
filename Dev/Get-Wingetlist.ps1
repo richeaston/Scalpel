@@ -100,5 +100,5 @@ $dir = Split-Path $scriptpath
 
 $parsedApps | ConvertTo-Json -Depth 3 | Out-File -Encoding UTF8 -FilePath "$dir\winget_apps.json"
 
-Write-Host "`nData exported to winget_apps.json" -BackgroundColor Blue -ForegroundColor Green
+Write-Host "`n Data exported to winget_apps.json" -BackgroundColor Blue -ForegroundColor Yellow
 Write-host ""
