@@ -81,7 +81,7 @@ foreach ($app in $parsedApps) {
 
 $parsedApps | Sort-Object Name | Format-Table -AutoSize
 
-Write-host "Installing any newer versions, Please Wait..." -BackgroundColor Green -ForegroundColor Yellow
+Write-host " Installing any newer versions, Please Wait... " -BackgroundColor Green -ForegroundColor Yellow
 Write-host ""
 foreach ($app in ($parsedApps | Sort-Object Name)) {
     if ($($app.available) -gt $($app.version)) {
@@ -105,5 +105,5 @@ $dir = Split-Path $scriptpath
 
 $parsedApps | sort-object Name | ConvertTo-Json -Depth 3 | Out-File -Encoding UTF8 -FilePath "$dir\winget_apps.json"
 
-Write-Host "`n Data exported to winget_apps.json" -BackgroundColor Blue -ForegroundColor Yellow
+Write-Host "`n Data exported to winget_apps.json " -BackgroundColor Blue -ForegroundColor Yellow
 Write-host ""
