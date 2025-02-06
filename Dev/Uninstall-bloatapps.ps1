@@ -1,7 +1,21 @@
-$bloatpackages = @('*Copilot*','*Dev Home*','*Game Bar*','*Game Speech Window*','*Microsoft 365 (Office)*','*Microsoft Bing Search*','*Microsoft Clipchamp*','*Microsoft News*','*Microsoft OneDrive*','*Microsoft To Do*','*MSN Weather*','*OneDrive*','*Power Automate*','*Quick Assist*','*Solitaire & Casual Games*','*Xbox*')
+$bloatpackages = @('Copilot','Dev Home','Game Bar','Game Speech Window','Feedback hub','Microsoft 365 (Office)','Microsoft Bing Search','LinkedIn','Microsoft Clipchamp','Microsoft News','Microsoft OneDrive','Microsoft To Do','MSN Weather','Media Player','Outlook','OneDrive','Power Automate','Quick Assist','Solitaire & Casual Games','Sound Recorder','Sticky Notes','Teams','Windows Clock','Xbox TCUI', 'Xbox Identity Provider','xbox','Microsoft 365 Copilot')
 
+#uninstall via winget
 foreach ($app in $bloatpackages) {
-    Winget uninstall $app --silent --force --purge -- verbose --ignore-warnings
+    try {
+        Winget uninstall $app --silent --force --purge --verbose
+    }
+    catch {
+        "No installed package found matching input criteria."
+    }
 }
 
-Write-Host "Finished processing app list."
+#Uninstall Appx Packages
+$appxpackages = @('MicrosoftWindows.CrossDevice', 'Microsoft.MicrosoftEdge.Stable', 'Microsoft.ZuneMusic', 'Microsoft.YourPhone', 'Microsoft.XboxGamingOverlay', 'Microsoft.GetHelp', 'Microsoft.Windows.DevHome' )
+foreach ($appx in $appxpackages) {
+    Write-host "Trying to uninstalling $appx, Please Wait."
+    Get-AppxPackage $appx -AllUsers -Verbose | Remove-AppxPackage -AllUsers -Verbose -ErrorAction Ignore
+}
+
+write-host ""
+Write-Host "Finished processing Bloatware." -ForegroundColor Green
