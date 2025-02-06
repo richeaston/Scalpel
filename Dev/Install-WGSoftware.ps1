@@ -99,7 +99,7 @@ foreach ($app in ($parsedApps | Sort-Object Name)) {
     Write-host $($app.name) -NoNewline -ForegroundColor Yellow
     Write-Host ", Please Wait." -ForegroundColor Green
     Write-host ""
-    winget install $($app.name) --silent --accept-package-agreements --accept-source-agreements
+    winget install --name $($app.name) --id $($app.id) --silent --accept-package-agreements --accept-source-agreements --dependency-Source --ignore-security-hash
     Write-host ""
 }
     
