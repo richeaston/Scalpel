@@ -1,3 +1,9 @@
 Dev/winget_apps.json
 Dev/Drivers/572.16-desktop-win10-win11-64bit-international-dch-whql.exe
 Dev/Services.json
+Dev/Notes.txt
+.gitignore
+Dev/regtweak.bat
+Dev/Uninstall-edge.ps1
+Dev/DefaultLayouts.xml
+Dev/reghives.ps1
