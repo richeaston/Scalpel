@@ -119,7 +119,7 @@ foreach ($app in ($parsedApps | Sort-Object Name)) {
 $scriptpath = $MyInvocation.MyCommand.Path
 $dir = Split-Path $scriptpath
 
-#$parsedApps | sort-object Name | ConvertTo-Json -Depth 3 | Out-File -Encoding UTF8 -FilePath "$dir\winget_apps.json"
+$parsedApps | sort-object Name | ConvertTo-Json -Depth 3 | Out-File -Encoding UTF8 -FilePath "$dir\winget_apps.json"
 
 Write-Host "`n Data exported to winget_apps.json " -BackgroundColor Blue -ForegroundColor Yellow
 Write-host ""
