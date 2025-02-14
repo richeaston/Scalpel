@@ -52,15 +52,17 @@ foreach ($line in $validLines) {
 
         if ($remaining -match "^(.+?)\s+([^\s]+)\s+([^\s]+)\s*([^\s]+)?$") {
             if ($null -ne $remaining -and $remaining -ne "") {
-                $id = $Matches[2]  # ID is the FIRST captured group (including ARP\Machine\)
-                $version = $Matches[3].Trim()
-                $available = if ($Matches[4]) { $Matches[4].Trim() } else { $Matches[3].Trim() }
-                $parsedApps += [PSCustomObject]@{
-                    Name      = $name
-                    Id        = $id
-                    Version   = $version
-                    Available = $available
-                    Source    = if ($Matches[2] -like '*MSIX*') { "mstore" } else { "winget" }
+                if ($remaining -notcontains '%') {
+                    $id = $Matches[2]  # ID is the FIRST captured group (including ARP\Machine\)
+                    $version = $Matches[3].Trim()
+                    $available = if ($Matches[4]) { $Matches[4].Trim() } else { $Matches[3].Trim() }
+                    $parsedApps += [PSCustomObject]@{
+                        Name      = $name
+                        Id        = $id
+                        Version   = $version
+                        Available = $available
+                        Source    = if ($Matches[2] -like '*MSIX*') { "mstore" } else { "winget" }
+                    }
                 }
             }
         }

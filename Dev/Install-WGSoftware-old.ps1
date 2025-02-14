@@ -37,6 +37,7 @@ Function Get-WingetVersion {
 
 }
 
+
 #needs app-installer package and dependencies
 Function Install-Winget {
 	
@@ -83,7 +84,16 @@ Function Install-Winget {
 	
 }
 
-Get-AppxPackage -allusers Microsoft.Store | ForEach-Object {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppxManifest.xml"}
+$scriptpath = $MyInvocation.MyCommand.Path
+$dir = Split-Path $scriptpath
+$AppsJson = get-content -path "$dir\winget_apps.json" -Raw
+
+if (test-path $AppsJson) {
+    Write-host "Apps JSON File Present, ingesting." -BackgroundColor Green -ForegroundColor Blue
+    $parsedApps = ConvertFrom-Json -InputObject $AppsJson
+    Write-host ""
+    $parsedApps
+}
 
 Write-Host "Checking for Winget" -BackgroundColor Cyan -ForegroundColor Black
 if (!(Winget --version)) {
@@ -94,40 +104,22 @@ else {
     Get-WingetVersion
 }
 
-$AppsJson = "c:\temp\winget_apps.json"
 
-if (test-path $AppsJson) {
-    Write-host "Apps JSON File Present, ingesting." -BackgroundColor Green -ForegroundColor Blue
-    Write-host ""
-    try {
-        $parsedApps = get-content -path $AppsJson -Raw -Encoding UTF8 | ConvertFrom-Json 
-    }
-    catch {
-        Write-Error "Error processing JSON file: $_"
-    }
-    #$parsedApps | Sort-Object Name | Format-Table -AutoSize
-} else {
-    Write-Warning "Apps JSON file not found: $AppsJson"
-}
-
-
-#$parsedApps | Sort-Object Name | Format-Table -AutoSize
+$parsedApps | Sort-Object Name | Format-Table -AutoSize
 
 Write-host "Installing Software from Manifest, Please Wait..." -BackgroundColor Green -ForegroundColor Yellow
 Write-host ""
 foreach ($app in ($parsedApps | Sort-Object Name)) {
-    if ($null -ne $($app.name) -and $($app.name -ne "")) {
-        Write-host "Installing " -NoNewline -ForegroundColor Green
-        Write-host $($app.name) -NoNewline -ForegroundColor Yellow
-        Write-Host ", Please Wait." -ForegroundColor Green
-        Write-host ""
-        try {
-            # Suppress output by redirecting it to $null
-            winget install --id $($app.id) --source $($app.Source) --silent --accept-package-agreements --accept-source-agreements --dependency-Source --ignore-security-hash *> $null 
-
-        }
-        Catch {
-            # Handle any errors that occur during installation
-        }
+    Write-host "Installing " -NoNewline -ForegroundColor Green
+    Write-host $($app.name) -NoNewline -ForegroundColor Yellow
+    Write-Host ", Please Wait." -ForegroundColor Green
+    Write-host ""
+    try {
+        winget install --id $($app.id) --silent --accept-package-agreements --accept-source-agreements --dependency-Source --ignore-security-hash
     }
+    Catch {
+
+    }
+    Write-host ""
 }
+    
