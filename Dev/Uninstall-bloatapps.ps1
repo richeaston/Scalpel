@@ -31,6 +31,7 @@ $appxpackages = @(
   "Microsoft.PowerAutomateDesktop_8wekyb3d8bbwe!PAD.Console",
   "Microsoft.BingWeather_8wekyb3d8bbwe!App",
   "Microsoft.BingSearch"
+  "*WebExperience*"
 )
 
 foreach ($appx in ($appxpackages | Sort-object)) {
