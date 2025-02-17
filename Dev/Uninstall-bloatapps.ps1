@@ -1,4 +1,4 @@
-$bloatpackages = @('Copilot', 'Dev Home', 'Game Bar', 'Game Speech Window', 'Feedback hub', 'Microsoft.BingSearch', 'LinkedIn', 'LinkedInforWindows', 'Microsoft Clipchamp', 'Microsoft News', 'Microsoft OneDrive', 'Microsoft To Do', 'MSN Weather', 'Media Player', 'Outlook', 'OneDrive', 'Power Automate', 'Quick Assist', 'Solitaire & Casual Games', 'Sound Recorder', 'Sticky Notes', 'Teams', 'Windows Clock', 'Xbox TCUI', 'Xbox Identity Provider', 'xbox', 'Microsoft 365 Copilot', 'Microsoft 365 (Office)')
+$bloatpackages = @('Copilot', 'Dev Home', 'Game Bar', 'Game Speech Window', 'Feedback hub', 'Microsoft.BingSearch', 'LinkedIn', 'LinkedInforWindows', 'Microsoft Clipchamp', 'Microsoft News', 'Microsoft OneDrive', 'Microsoft To Do', 'MSN Weather', 'Media Player', 'Outlook', 'OneDrive', 'Power Automate', 'Quick Assist', 'Solitaire & Casual Games', 'Sound Recorder', <#'Sticky Notes',#> 'Teams', 'Windows Clock', 'Xbox TCUI', 'Xbox Identity Provider', 'xbox', 'Microsoft 365 Copilot', 'Microsoft 365 (Office)')
 Stop-Process -Name "*teams*" -Force -ErrorAction SilentlyContinue
 
 # Configure Winget to accept source agreements
