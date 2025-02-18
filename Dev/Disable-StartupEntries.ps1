@@ -29,9 +29,9 @@ if ($StartupItems) { $StartupEntries += $StartupItems }
 
 # Process and ask to disable
 foreach ($entry in $StartupEntries | Sort-Object -Unique) {
-    $response = Read-Host "Disable '$entry'? (Y/N)"
+    #$response = Read-Host "Disable '$entry'? (Y/N)"
 
-    if ($response -eq "Y" -or $response -eq "y") {
+    #if ($response -eq "Y" -or $response -eq "y") {
         Write-Host "`tDisabling '$entry'..."
 
         # Disable based on where the entry is (Registry or Startup Folder)
@@ -45,9 +45,9 @@ foreach ($entry in $StartupEntries | Sort-Object -Unique) {
         }
 
         Write-Host "`t'$entry' disabled." -ForegroundColor Red
-    } else {
-        Write-Host "`t'$entry' left enabled." -ForegroundColor Green
-    }
+    #} else {
+    #    Write-Host "`t'$entry' left enabled." -ForegroundColor Green
+    #}
 }
 write-host
 Write-Host "Finished processing startup entries." -BackgroundColor Green -ForegroundColor Yellow

@@ -8,7 +8,7 @@ $services = Get-Content -Path "$scriptDir\Services.json" | ConvertFrom-Json
 foreach ($service in $services) {
     try {
         # Check if the service exists
-        if (Get-Service -Name $service.ServiceNameEXE -ErrorAction SilentlyContinue) {
+        if (Get-Service -Name $service.ServiceName -ErrorAction SilentlyContinue) {
             # Check if the service is running
             if ((Get-Service -Name $service.ServiceName).Status -eq "Running") {
                 # Stop the service forcefully
