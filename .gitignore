@@ -8,3 +8,5 @@ Dev/Uninstall-edge.ps1
 Dev/DefaultLayouts.xml
 Dev/reghives.ps1
 Dev/EdgeRemoval.ps1
+Dev/Scalpel-beta.Run.ps1
+.gitignore
